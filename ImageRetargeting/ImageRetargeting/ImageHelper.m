@@ -90,8 +90,13 @@
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);
     for (int i = 0; i < width * height * 4; i += 4) {
-        data[i] = 255;
+        int r = data[i], g = data[i + 1], b = data[i + 2];
+        int intensity = r * 0.2989 + g * 0.5870 + b * 0.1140;
+        data[i] = intensity;
+        data[i + 1] = intensity;
+        data[i + 2] = intensity;
     }
+    // 0.2989, 0.5870, 0.1140
 }
 
 
