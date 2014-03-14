@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "ImageHelper.h"
+#import "UIImage+Resize.h"
 
 @interface ViewController ()
 
@@ -31,7 +32,7 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     UIImage *chosenImage = info[UIImagePickerControllerOriginalImage];
-    self.imageView.image = chosenImage;
+    self.imageView.image = [UIImage imageWithUIImage:chosenImage withScale:0.2];
     
     //NSArray* pixelData = [[NSArray alloc] initWithArray:[ImageHelper getRGBAsFromImage:chosenImage atX:0 andY:0 count:1]];
     //UIColor* initialColor = [[UIColor alloc] init];

@@ -22,6 +22,7 @@
 		0A3D9BB418D286B90008E772 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A3D9BB218D286B90008E772 /* InfoPlist.strings */; };
 		0A3D9BB618D286B90008E772 /* ImageRetargetingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BB518D286B90008E772 /* ImageRetargetingTests.m */; };
 		0A3D9BC118D2D10D0008E772 /* ImageHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BC018D2D10D0008E772 /* ImageHelper.m */; };
+		0A3D9BC418D313980008E772 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BC318D313980008E772 /* UIImage+Resize.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,8 @@
 		0A3D9BB518D286B90008E772 /* ImageRetargetingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageRetargetingTests.m; sourceTree = "<group>"; };
 		0A3D9BBF18D2D10D0008E772 /* ImageHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageHelper.h; sourceTree = "<group>"; };
 		0A3D9BC018D2D10D0008E772 /* ImageHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageHelper.m; sourceTree = "<group>"; };
+		0A3D9BC218D313980008E772 /* UIImage+Resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Resize.h"; sourceTree = "<group>"; };
+		0A3D9BC318D313980008E772 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Resize.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +127,8 @@
 				0A3D9B9118D286B90008E772 /* Supporting Files */,
 				0A3D9BBF18D2D10D0008E772 /* ImageHelper.h */,
 				0A3D9BC018D2D10D0008E772 /* ImageHelper.m */,
+				0A3D9BC218D313980008E772 /* UIImage+Resize.h */,
+				0A3D9BC318D313980008E772 /* UIImage+Resize.m */,
 			);
 			path = ImageRetargeting;
 			sourceTree = "<group>";
@@ -258,6 +263,7 @@
 				0A3D9B9B18D286B90008E772 /* AppDelegate.m in Sources */,
 				0A3D9B9718D286B90008E772 /* main.m in Sources */,
 				0A3D9BC118D2D10D0008E772 /* ImageHelper.m in Sources */,
+				0A3D9BC418D313980008E772 /* UIImage+Resize.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
