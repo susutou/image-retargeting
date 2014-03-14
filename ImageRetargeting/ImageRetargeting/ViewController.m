@@ -33,12 +33,12 @@
     UIImage *chosenImage = info[UIImagePickerControllerOriginalImage];
     self.imageView.image = chosenImage;
     
-    NSArray* pixelData = [[NSArray alloc] initWithArray:[ImageHelper getRGBAsFromImage:chosenImage atX:0 andY:0 count:1]];
-    UIColor* initialColor = [[UIColor alloc] init];
-    initialColor = pixelData[0];
+    //NSArray* pixelData = [[NSArray alloc] initWithArray:[ImageHelper getRGBAsFromImage:chosenImage atX:0 andY:0 count:1]];
+    //UIColor* initialColor = [[UIColor alloc] init];
+    //initialColor = pixelData[0];
     
-    float red, green, blue, alpha;
-    [initialColor getRed:&red green:&green blue:&blue alpha:&alpha];
+    //float red, green, blue, alpha;
+    //[initialColor getRed:&red green:&green blue:&blue alpha:&alpha];
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
@@ -69,6 +69,12 @@
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
     [self presentViewController:picker animated:YES completion:NULL];
+    
+}
+
+- (IBAction)shrinkImage:(UIButton *)sender {
+    
+    self.imageView.image = [ImageHelper modifyImage:self.imageView.image];
     
 }
 
