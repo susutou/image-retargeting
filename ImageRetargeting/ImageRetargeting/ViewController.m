@@ -30,9 +30,9 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     UIImage *chosenImage = info[UIImagePickerControllerOriginalImage];
-    RetargetingSolver *solver = [[RetargetingSolver alloc] initWithImage:chosenImage];
+    self.solver = [[RetargetingSolver alloc] initWithImage:chosenImage];
     
-    self.imageView.image = solver.saliencyImage;
+    self.imageView.image = [UIImage imageWithUIImage:chosenImage withLongEdgeAs:400];
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
@@ -72,6 +72,11 @@
     //GradientOperator *operator = [[GradientOperator alloc] init];
     //self.imageView.image = [ImageHelper modifyImage:self.imageView.image withOperator:operator];
     
+}
+
+- (IBAction)showSaliencyMap:(UIButton *)sender
+{
+    self.imageView.image = self.solver.saliencyImage;
 }
 
 - (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender {

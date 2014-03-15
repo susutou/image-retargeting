@@ -15,9 +15,12 @@
 @interface ViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
+@property (strong, nonatomic) RetargetingSolver *solver;
 
 - (IBAction)takePhoto:(UIButton *)sender;
 - (IBAction)selectPhoto:(UIButton *)sender;
 - (IBAction)shrinkImage:(UIButton *)sender;
+- (IBAction)showSaliencyMap:(UIButton *)sender;
+
 - (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender;
 @end

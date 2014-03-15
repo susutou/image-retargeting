@@ -62,11 +62,11 @@
     }
     
     if (width > height) {
-        height = 200 * ((double) height / width);
-        width = 200;
+        height = length * ((double) height / width);
+        width = length;
     } else {
-        width = 200 * ((double) width / height);
-        height = 200;
+        width = length * ((double) width / height);
+        height = length;
     }
     
     // NSLog(@"Width: %d, Height: %d", width, height);
