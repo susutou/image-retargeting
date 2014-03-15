@@ -79,4 +79,7 @@
     
 }
 
+- (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender {
+
+}
 @end
