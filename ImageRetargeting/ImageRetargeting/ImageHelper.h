@@ -13,10 +13,13 @@
 
 + (NSArray *)getRGBAsFromImage:(UIImage *)image atX:(int)xx andY:(int)yy count:(int)count;
 + (UIImage *)modifyImage:(UIImage *)image;
+
 + (UIImage *)modifyImage:(UIImage *)image withOperator:(ImageOperator *)operator;
 
 + (unsigned char *) getRawDataFromImage:(CGImageRef)imageRef;
 + (double *) getGradientMatrixForImage:(CGImageRef)imageRef withData:(unsigned char *)data;
 + (double *)expandedGradientForImage:(CGImageRef)imageRef withGradient:(double *)gradient;
+
++ (UIImage *)modifyImageSeamCarvingShrinkHorizonal:(UIImage*)image atWidth:(int)cur_width shringBy: (int)reduced_width;
 
 @end

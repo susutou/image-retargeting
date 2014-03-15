@@ -9,7 +9,7 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-
+@property int cur_effective_width;
 @end
 
 @implementation ViewController
@@ -53,6 +53,7 @@
     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     
     [self presentViewController:picker animated:YES completion:NULL];
+    self.cur_effective_width = -1;
 }
 
 // action for photo selecting button
@@ -63,7 +64,7 @@
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
     [self presentViewController:picker animated:YES completion:NULL];
-    
+    self.cur_effective_width = -1;
 }
 
 - (IBAction)shrinkImage:(UIButton *)sender {
@@ -73,4 +74,12 @@
     
 }
 
+- (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender {
+    if (self.cur_effective_width == -1) {
+        self.cur_effective_width = self.imageView.image.size.width;
+    }
+    const int kC_width_to_reduce = 10;
+    self.imageView.image = [ImageHelper modifyImageSeamCarvingShrinkHorizonal:self.imageView.image atWidth:self.cur_effective_width shringBy:kC_width_to_reduce];
+    self.cur_effective_width -= kC_width_to_reduce;
+}
 @end
