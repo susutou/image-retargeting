@@ -13,5 +13,6 @@
 + (NSArray *)getRGBAsFromImage:(UIImage *)image atX:(int)xx andY:(int)yy count:(int)count;
 + (UIImage *)modifyImage:(UIImage *)image;
 //+ (void) resizer:(CGImageRef)imageRef withData:(unsigned char *)data;
++ (UIImage *)modifyImageSeamCarvingShrinkHorizonal:(UIImage*)image;
 
 @end

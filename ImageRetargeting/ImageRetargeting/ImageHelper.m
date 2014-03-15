@@ -87,6 +87,13 @@
     return newImage;
 }
 
++ (UIImage *)modifyImageSeamCarvingShrinkHorizonal:(UIImage*)image
+{
+    
+    return image;
+}
+
+
 + (void) resizer:(CGImageRef)imageRef withData:(unsigned char *)data
 {
     NSUInteger width = CGImageGetWidth(imageRef);

@@ -80,6 +80,6 @@
 }
 
 - (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender {
-
+    self.imageView.image = [ImageHelper modifyImageSeamCarvingShrinkHorizonal:self.imageView.image];
 }
 @end

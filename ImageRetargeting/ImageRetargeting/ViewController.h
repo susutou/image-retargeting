@@ -15,5 +15,5 @@
 - (IBAction)takePhoto:(UIButton *)sender;
 - (IBAction)selectPhoto:(UIButton *)sender;
 - (IBAction)shrinkImage:(UIButton *)sender;
-
+- (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender;
 @end
