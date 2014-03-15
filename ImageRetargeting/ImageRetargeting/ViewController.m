@@ -10,6 +10,7 @@
 
 @interface ViewController ()
 @property int cur_effective_width;
+@property int cur_effective_height;
 @end
 
 @implementation ViewController
@@ -54,6 +55,7 @@
     
     [self presentViewController:picker animated:YES completion:NULL];
     self.cur_effective_width = -1;
+    self.cur_effective_height = -1;
 }
 
 // action for photo selecting button
@@ -65,6 +67,7 @@
     
     [self presentViewController:picker animated:YES completion:NULL];
     self.cur_effective_width = -1;
+    self.cur_effective_height = -1;
 }
 
 - (IBAction)shrinkImage:(UIButton *)sender {
@@ -80,11 +83,24 @@
 }
 
 - (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender {
+    self.view.userInteractionEnabled = NO;
     if (self.cur_effective_width == -1) {
         self.cur_effective_width = self.imageView.image.size.width;
     }
     const int kC_width_to_reduce = 10;
     self.imageView.image = [ImageHelper modifyImageSeamCarvingShrinkHorizonal:self.imageView.image atWidth:self.cur_effective_width shringBy:kC_width_to_reduce];
     self.cur_effective_width -= kC_width_to_reduce;
+    self.view.userInteractionEnabled = YES;
+}
+
+- (IBAction)seamCarvingShrinkVertical:(UIButton *)sender {
+    self.view.userInteractionEnabled = NO;
+    if (self.cur_effective_height == -1) {
+        self.cur_effective_height = self.imageView.image.size.height;
+    }
+    const int kC_height_to_reduce = 10;
+    self.imageView.image = [ImageHelper modifyImageSeamCarvingShrinkVertical:self.imageView.image atHeight:self.cur_effective_height shringBy:kC_height_to_reduce];
+    self.cur_effective_height -= kC_height_to_reduce;
+    self.view.userInteractionEnabled = YES;
 }
 @end

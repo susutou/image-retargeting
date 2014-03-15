@@ -23,4 +23,5 @@
 - (IBAction)showSaliencyMap:(UIButton *)sender;
 
 - (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender;
+- (IBAction)seamCarvingShrinkVertical:(UIButton *)sender;
 @end

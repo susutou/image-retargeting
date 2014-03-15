@@ -21,5 +21,6 @@
 + (double *)expandedGradientForImage:(CGImageRef)imageRef withGradient:(double *)gradient;
 
 + (UIImage *)modifyImageSeamCarvingShrinkHorizonal:(UIImage*)image atWidth:(int)cur_width shringBy: (int)reduced_width;
++ (UIImage *)modifyImageSeamCarvingShrinkVertical:(UIImage*)image atHeight:(int)cur_height shringBy: (int)reduced_height;
 
 @end
