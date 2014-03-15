@@ -32,6 +32,8 @@
 		0A3D9BDD18D3BF270008E772 /* CVXGenRangeSolver25x25+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BD718D3BF270008E772 /* CVXGenRangeSolver25x25+Util.m */; };
 		0A3D9BDE18D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BD918D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m */; };
 		0A3D9BE118D3C3D20008E772 /* RetargetingSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BE018D3C3D20008E772 /* RetargetingSolver.m */; };
+		0A3D9BE518D4CFCC0008E772 /* ImageOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BE418D4CFCC0008E772 /* ImageOperator.m */; };
+		0A3D9BE818D4D01F0008E772 /* GradientOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BE718D4D01F0008E772 /* GradientOperator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +88,10 @@
 		0A3D9BD918D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVXGenRangeSolver25x25+TestSolver.m"; sourceTree = "<group>"; };
 		0A3D9BDF18D3C3D20008E772 /* RetargetingSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RetargetingSolver.h; sourceTree = "<group>"; };
 		0A3D9BE018D3C3D20008E772 /* RetargetingSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RetargetingSolver.m; sourceTree = "<group>"; };
+		0A3D9BE318D4CFCC0008E772 /* ImageOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageOperator.h; sourceTree = "<group>"; };
+		0A3D9BE418D4CFCC0008E772 /* ImageOperator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageOperator.m; sourceTree = "<group>"; };
+		0A3D9BE618D4D01F0008E772 /* GradientOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradientOperator.h; sourceTree = "<group>"; };
+		0A3D9BE718D4D01F0008E772 /* GradientOperator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GradientOperator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -227,6 +233,10 @@
 				0A3D9BC318D313980008E772 /* UIImage+Resize.m */,
 				0A3D9BDF18D3C3D20008E772 /* RetargetingSolver.h */,
 				0A3D9BE018D3C3D20008E772 /* RetargetingSolver.m */,
+				0A3D9BE318D4CFCC0008E772 /* ImageOperator.h */,
+				0A3D9BE418D4CFCC0008E772 /* ImageOperator.m */,
+				0A3D9BE618D4D01F0008E772 /* GradientOperator.h */,
+				0A3D9BE718D4D01F0008E772 /* GradientOperator.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -335,6 +345,7 @@
 				0A3D9B9B18D286B90008E772 /* AppDelegate.m in Sources */,
 				0A3D9BDB18D3BF270008E772 /* CVXGenRangeSolver25x25+Ldl.m in Sources */,
 				0A3D9B9718D286B90008E772 /* main.m in Sources */,
+				0A3D9BE818D4D01F0008E772 /* GradientOperator.m in Sources */,
 				0A3D9BCE18D3A7CC0008E772 /* SparseMatrix.m in Sources */,
 				0A3D9BC118D2D10D0008E772 /* ImageHelper.m in Sources */,
 				0A3D9BC418D313980008E772 /* UIImage+Resize.m in Sources */,
@@ -342,6 +353,7 @@
 				0A3D9BDD18D3BF270008E772 /* CVXGenRangeSolver25x25+Util.m in Sources */,
 				0A3D9BCD18D3A7CC0008E772 /* Matrix.m in Sources */,
 				0A3D9BDE18D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m in Sources */,
+				0A3D9BE518D4CFCC0008E772 /* ImageOperator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

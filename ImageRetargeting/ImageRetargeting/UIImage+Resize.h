@@ -10,5 +10,6 @@
 
 + (UIImage *)imageWithUIImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 + (UIImage *)imageWithUIImage:(UIImage *)image withScale:(CGFloat)scale;
++ (UIImage *)imageWithUIImage:(UIImage *)image withLongEdgeAs:(int)length;
 
 @end

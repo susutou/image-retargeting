@@ -87,13 +87,69 @@
     return newImage;
 }
 
++ (UIImage *)modifyImage:(UIImage *)image withOperator:(ImageOperator *)operator
+{
+    // First get the image into your data buffer
+    CGImageRef imageRef = [image CGImage];
+    NSUInteger width = CGImageGetWidth(imageRef);
+    NSUInteger height = CGImageGetHeight(imageRef);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    unsigned char *rawData = (unsigned char*) calloc(height * width * 4, sizeof(unsigned char));
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bytesPerRow = bytesPerPixel * width;
+    NSUInteger bitsPerComponent = 8;
+    CGContextRef context = CGBitmapContextCreate(rawData, width, height,
+                                                 bitsPerComponent, bytesPerRow, colorSpace,
+                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGColorSpaceRelease(colorSpace);
+    
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    //CGContextRelease(context);
+    
+    [operator changeImage:imageRef withData:rawData];
+    
+    imageRef = CGBitmapContextCreateImage(context);
+    UIImage *newImage = [UIImage imageWithCGImage:imageRef];
+    
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    CGImageRelease(imageRef);
+    free(rawData);
+    
+    //[NSData dataWithBytesNoCopy:rawData length:width * height];
+    
+    return newImage;
+}
+
++ (unsigned char *) getRawDataFromImage:(CGImageRef)imageRef
+{
+    NSUInteger width = CGImageGetWidth(imageRef);
+    NSUInteger height = CGImageGetHeight(imageRef);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    unsigned char *rawData = (unsigned char*) calloc(height * width * 4, sizeof(unsigned char));
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bytesPerRow = bytesPerPixel * width;
+    NSUInteger bitsPerComponent = 8;
+    CGContextRef context = CGBitmapContextCreate(rawData, width, height,
+                                                 bitsPerComponent, bytesPerRow, colorSpace,
+                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGColorSpaceRelease(colorSpace);
+    
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    
+    return rawData;
+}
+
 + (void) resizer:(CGImageRef)imageRef withData:(unsigned char *)data
 {
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);
     
     double *gradient = [ImageHelper getGradientMatrixForImage:imageRef withData:data];
-    double *expandedGradient = [ImageHelper expandMapForImage:imageRef withGradient:gradient];
+    double *expandedGradient = [ImageHelper expandedGradientForImage:imageRef withGradient:gradient];
     
     for (int i = 0; i < width * height; i += 1) {
         data[i * 4] = expandedGradient[i];
@@ -169,7 +225,7 @@
     return gradient;
 }
 
-+ (double *)expandMapForImage:(CGImageRef)imageRef withGradient:(double *)gradient
++ (double *)expandedGradientForImage:(CGImageRef)imageRef withGradient:(double *)gradient
 {
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);

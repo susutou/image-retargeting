@@ -7,8 +7,6 @@
 //
 
 #import "ViewController.h"
-#import "ImageHelper.h"
-#import "UIImage+Resize.h"
 
 @interface ViewController ()
 
@@ -32,14 +30,9 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     UIImage *chosenImage = info[UIImagePickerControllerOriginalImage];
-    self.imageView.image = [UIImage imageWithUIImage:chosenImage withScale:0.2];
+    RetargetingSolver *solver = [[RetargetingSolver alloc] initWithImage:chosenImage];
     
-    //NSArray* pixelData = [[NSArray alloc] initWithArray:[ImageHelper getRGBAsFromImage:chosenImage atX:0 andY:0 count:1]];
-    //UIColor* initialColor = [[UIColor alloc] init];
-    //initialColor = pixelData[0];
-    
-    //float red, green, blue, alpha;
-    //[initialColor getRed:&red green:&green blue:&blue alpha:&alpha];
+    self.imageView.image = solver.saliencyImage;
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
@@ -75,7 +68,8 @@
 
 - (IBAction)shrinkImage:(UIButton *)sender {
     
-    self.imageView.image = [ImageHelper modifyImage:self.imageView.image];
+    //GradientOperator *operator = [[GradientOperator alloc] init];
+    //self.imageView.image = [ImageHelper modifyImage:self.imageView.image withOperator:operator];
     
 }
 

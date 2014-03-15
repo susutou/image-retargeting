@@ -7,6 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ImageHelper.h"
+#import "RetargetingSolver.h"
+#import "UIImage+Resize.h"
+#import "GradientOperator.h"
 
 @interface ViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
