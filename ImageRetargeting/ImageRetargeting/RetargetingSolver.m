@@ -48,6 +48,8 @@
         
         self.saliencyImage = [ImageHelper modifyImage:self.saliencyImage withOperator:operator];
         
+        self.rangeSolver = [[CVXGenRangeSolver25x25 alloc] init];
+        
         free(gradient);
     }
     
@@ -112,23 +114,118 @@
     double sourceRatio = 1.0 * self.width / self.height;
     double targetRatio = 1.0 * targetWidth / targetHeight;
     
+    int W = self.width;
+    int H = self.height;
+    
     int minCellHeight = 0;
     int minCellWidth = 0;
     
-    double L = 0.7;
+    double LFactor = 0.7;
+    
+    double laplacianRegularizationWeight = 0.0;
+
+    Matrix *omega = self.saliencyMatrix;
     
     if (targetRatio > sourceRatio) {
-        minCellWidth = L * sourceRatio * targetHeight / self.numCols;
-        minCellHeight = L * targetHeight / self.numRows;
+        minCellWidth = LFactor * sourceRatio * targetHeight / self.numCols;
+        minCellHeight = LFactor * targetHeight / self.numRows;
     } else {
-        minCellWidth = L * targetWidth / self.numCols;
-        minCellHeight = L / sourceRatio * targetWidth / self.numRows;
+        minCellWidth = LFactor * targetWidth / self.numCols;
+        minCellHeight = LFactor / sourceRatio * targetWidth / self.numRows;
     }
     
     NSLog(@"minCellHeight = %d, minCellWidth = %d", minCellHeight, minCellWidth);
     
     // solve naive retargeting
+    // vector s
+    Matrix *s = [[Matrix alloc] initWithSizeRows:(M + N) andColumns:1];
+    // matrix K' * K
+    Matrix *Q;
+    // matrix K
+    FastCCSMatrix *K = [[FastCCSMatrix alloc] initWithSizeRows:(M * N) columns:(M + N) andMaxColSize:(M + N)];
+
+    // build ASAP matrix
+    double w = sqrt(1 - laplacianRegularizationWeight);
     
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            int row = i * M + j;
+            [K setEntryAtRow:row andColumn:i toValue:(1.0 * w * [omega entryAtRow:j andColumn:i] * N / W)];
+            [K setEntryAtRow:row andColumn:(j + M) toValue:(-1.0 * w * [omega entryAtRow:j andColumn:i] * M / H)];
+        }
+    }
+    
+    // add laplacian term
+    FastCCSMatrix *L = [[FastCCSMatrix alloc] initWithSizeRows:(M + N) columns:(M + N) andMaxColSize:2];
+    double lW = 1.0 * N / W * sqrt(laplacianRegularizationWeight);
+    for(int i = 0; i < M - 1; i++) {
+        [L setEntryAtRow:i andColumn:i toValue:-lW];
+        [L setEntryAtRow:i andColumn:(i + 1) toValue:lW];
+    }
+    
+    double lH = 1.0 * M / H * sqrt(laplacianRegularizationWeight);
+    for(int i = 0; i < N - 1; i++) {
+        [L setEntryAtRow:(M + i) andColumn:(M + i) toValue:-lH];
+        [L setEntryAtRow:(M + i) andColumn:(M + i + 1) toValue:lH];
+    }
+    
+    //calculate Q = K' * K + L
+    Q = [[K innerProduct] add:[L innerProduct]];
+    
+    double *solution;
+    double *QRawData = [Q rawDataAsColumnMajor];  // the actual data array underlying Q matrix
+    double *sRawData = [s rawDataAsColumnMajor];
+    
+    Matrix *minW = [[Matrix alloc] initVectorWithSize:N];
+    [minW setAllEntriesToValue:minCellWidth];
+    
+    Matrix *maxW = [[Matrix alloc] initVectorWithSize:N];
+    [maxW setAllEntriesToValue:targetWidth];
+    
+    Matrix *minH = [[Matrix alloc] initVectorWithSize:M];
+    [minH setAllEntriesToValue:minCellHeight];
+    
+    Matrix *maxH = [[Matrix alloc] initVectorWithSize:M];
+    [maxH setAllEntriesToValue:targetHeight];
+    
+    solution = [self.rangeSolver solveWithS:QRawData B:sRawData W:targetWidth H:targetHeight
+                                       minW:[minW rawDataVector]
+                                       maxW:[maxW rawDataVector]
+                                       minH:[minH rawDataVector]
+                                       maxH:[maxH rawDataVector]];
+    
+    Matrix *sRows = [[Matrix alloc] initFromColumnMajorData:(solution + M) withRows:N andColumns:1];
+    Matrix *sCols = [[Matrix alloc] initFromColumnMajorData:solution withRows:M andColumns:1];
+    
+    [sRows printMatrixWithName:@"sRows"];
+    [sCols printMatrixWithName:@"sCols"];
+}
+
+- (UIImage *)generateRetargetedImageFromVectorColumn:(double *)sCol row:(double *)sRow
+{
+    
+    
+    return NULL;
 }
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
