@@ -26,6 +26,12 @@
 		0A3D9BCC18D3A7CC0008E772 /* FastCCSMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BC718D3A7CC0008E772 /* FastCCSMatrix.m */; };
 		0A3D9BCD18D3A7CC0008E772 /* Matrix.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BC918D3A7CC0008E772 /* Matrix.m */; };
 		0A3D9BCE18D3A7CC0008E772 /* SparseMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BCB18D3A7CC0008E772 /* SparseMatrix.m */; };
+		0A3D9BDA18D3BF270008E772 /* CVXGenRangeSolver25x25.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BD118D3BF270008E772 /* CVXGenRangeSolver25x25.m */; };
+		0A3D9BDB18D3BF270008E772 /* CVXGenRangeSolver25x25+Ldl.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BD318D3BF270008E772 /* CVXGenRangeSolver25x25+Ldl.m */; };
+		0A3D9BDC18D3BF270008E772 /* CVXGenRangeSolver25x25+MatrixSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BD518D3BF270008E772 /* CVXGenRangeSolver25x25+MatrixSupport.m */; };
+		0A3D9BDD18D3BF270008E772 /* CVXGenRangeSolver25x25+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BD718D3BF270008E772 /* CVXGenRangeSolver25x25+Util.m */; };
+		0A3D9BDE18D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BD918D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m */; };
+		0A3D9BE118D3C3D20008E772 /* RetargetingSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D9BE018D3C3D20008E772 /* RetargetingSolver.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +74,18 @@
 		0A3D9BC918D3A7CC0008E772 /* Matrix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Matrix.m; sourceTree = "<group>"; };
 		0A3D9BCA18D3A7CC0008E772 /* SparseMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SparseMatrix.h; sourceTree = "<group>"; };
 		0A3D9BCB18D3A7CC0008E772 /* SparseMatrix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SparseMatrix.m; sourceTree = "<group>"; };
+		0A3D9BD018D3BF270008E772 /* CVXGenRangeSolver25x25.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVXGenRangeSolver25x25.h; sourceTree = "<group>"; };
+		0A3D9BD118D3BF270008E772 /* CVXGenRangeSolver25x25.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVXGenRangeSolver25x25.m; sourceTree = "<group>"; };
+		0A3D9BD218D3BF270008E772 /* CVXGenRangeSolver25x25+Ldl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CVXGenRangeSolver25x25+Ldl.h"; sourceTree = "<group>"; };
+		0A3D9BD318D3BF270008E772 /* CVXGenRangeSolver25x25+Ldl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVXGenRangeSolver25x25+Ldl.m"; sourceTree = "<group>"; };
+		0A3D9BD418D3BF270008E772 /* CVXGenRangeSolver25x25+MatrixSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CVXGenRangeSolver25x25+MatrixSupport.h"; sourceTree = "<group>"; };
+		0A3D9BD518D3BF270008E772 /* CVXGenRangeSolver25x25+MatrixSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVXGenRangeSolver25x25+MatrixSupport.m"; sourceTree = "<group>"; };
+		0A3D9BD618D3BF270008E772 /* CVXGenRangeSolver25x25+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CVXGenRangeSolver25x25+Util.h"; sourceTree = "<group>"; };
+		0A3D9BD718D3BF270008E772 /* CVXGenRangeSolver25x25+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVXGenRangeSolver25x25+Util.m"; sourceTree = "<group>"; };
+		0A3D9BD818D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CVXGenRangeSolver25x25+TestSolver.h"; sourceTree = "<group>"; };
+		0A3D9BD918D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CVXGenRangeSolver25x25+TestSolver.m"; sourceTree = "<group>"; };
+		0A3D9BDF18D3C3D20008E772 /* RetargetingSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RetargetingSolver.h; sourceTree = "<group>"; };
+		0A3D9BE018D3C3D20008E772 /* RetargetingSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RetargetingSolver.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,18 +145,12 @@
 		0A3D9B9018D286B90008E772 /* ImageRetargeting */ = {
 			isa = PBXGroup;
 			children = (
+				0A3D9BE218D3C3DF0008E772 /* Classes */,
+				0A3D9BCF18D3BF180008E772 /* CVXGenRangeSolver25x25 */,
 				0A3D9BC518D3A79C0008E772 /* Numerics */,
-				0A3D9B9918D286B90008E772 /* AppDelegate.h */,
-				0A3D9B9A18D286B90008E772 /* AppDelegate.m */,
 				0A3D9B9C18D286B90008E772 /* Main.storyboard */,
-				0A3D9B9F18D286B90008E772 /* ViewController.h */,
-				0A3D9BA018D286B90008E772 /* ViewController.m */,
 				0A3D9BA218D286B90008E772 /* Images.xcassets */,
 				0A3D9B9118D286B90008E772 /* Supporting Files */,
-				0A3D9BBF18D2D10D0008E772 /* ImageHelper.h */,
-				0A3D9BC018D2D10D0008E772 /* ImageHelper.m */,
-				0A3D9BC218D313980008E772 /* UIImage+Resize.h */,
-				0A3D9BC318D313980008E772 /* UIImage+Resize.m */,
 			);
 			path = ImageRetargeting;
 			sourceTree = "<group>";
@@ -183,6 +195,40 @@
 				0A3D9BCB18D3A7CC0008E772 /* SparseMatrix.m */,
 			);
 			name = Numerics;
+			sourceTree = "<group>";
+		};
+		0A3D9BCF18D3BF180008E772 /* CVXGenRangeSolver25x25 */ = {
+			isa = PBXGroup;
+			children = (
+				0A3D9BD018D3BF270008E772 /* CVXGenRangeSolver25x25.h */,
+				0A3D9BD118D3BF270008E772 /* CVXGenRangeSolver25x25.m */,
+				0A3D9BD218D3BF270008E772 /* CVXGenRangeSolver25x25+Ldl.h */,
+				0A3D9BD318D3BF270008E772 /* CVXGenRangeSolver25x25+Ldl.m */,
+				0A3D9BD418D3BF270008E772 /* CVXGenRangeSolver25x25+MatrixSupport.h */,
+				0A3D9BD518D3BF270008E772 /* CVXGenRangeSolver25x25+MatrixSupport.m */,
+				0A3D9BD618D3BF270008E772 /* CVXGenRangeSolver25x25+Util.h */,
+				0A3D9BD718D3BF270008E772 /* CVXGenRangeSolver25x25+Util.m */,
+				0A3D9BD818D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.h */,
+				0A3D9BD918D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m */,
+			);
+			name = CVXGenRangeSolver25x25;
+			sourceTree = "<group>";
+		};
+		0A3D9BE218D3C3DF0008E772 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				0A3D9B9918D286B90008E772 /* AppDelegate.h */,
+				0A3D9B9A18D286B90008E772 /* AppDelegate.m */,
+				0A3D9B9F18D286B90008E772 /* ViewController.h */,
+				0A3D9BA018D286B90008E772 /* ViewController.m */,
+				0A3D9BBF18D2D10D0008E772 /* ImageHelper.h */,
+				0A3D9BC018D2D10D0008E772 /* ImageHelper.m */,
+				0A3D9BC218D313980008E772 /* UIImage+Resize.h */,
+				0A3D9BC318D313980008E772 /* UIImage+Resize.m */,
+				0A3D9BDF18D3C3D20008E772 /* RetargetingSolver.h */,
+				0A3D9BE018D3C3D20008E772 /* RetargetingSolver.m */,
+			);
+			name = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -282,14 +328,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A3D9BDC18D3BF270008E772 /* CVXGenRangeSolver25x25+MatrixSupport.m in Sources */,
+				0A3D9BE118D3C3D20008E772 /* RetargetingSolver.m in Sources */,
 				0A3D9BCC18D3A7CC0008E772 /* FastCCSMatrix.m in Sources */,
 				0A3D9BA118D286B90008E772 /* ViewController.m in Sources */,
 				0A3D9B9B18D286B90008E772 /* AppDelegate.m in Sources */,
+				0A3D9BDB18D3BF270008E772 /* CVXGenRangeSolver25x25+Ldl.m in Sources */,
 				0A3D9B9718D286B90008E772 /* main.m in Sources */,
 				0A3D9BCE18D3A7CC0008E772 /* SparseMatrix.m in Sources */,
 				0A3D9BC118D2D10D0008E772 /* ImageHelper.m in Sources */,
 				0A3D9BC418D313980008E772 /* UIImage+Resize.m in Sources */,
+				0A3D9BDA18D3BF270008E772 /* CVXGenRangeSolver25x25.m in Sources */,
+				0A3D9BDD18D3BF270008E772 /* CVXGenRangeSolver25x25+Util.m in Sources */,
 				0A3D9BCD18D3A7CC0008E772 /* Matrix.m in Sources */,
+				0A3D9BDE18D3BF270008E772 /* CVXGenRangeSolver25x25+TestSolver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
