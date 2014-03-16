@@ -34,6 +34,8 @@
         self.numCols = N;
         self.height = CGImageGetHeight(self.originalImage.CGImage);
         self.width = CGImageGetWidth(self.originalImage.CGImage);
+        self.currentHeight = self.height;
+        self.currentWidth = self.width;
         
         CGImageRef imageRef = self.saliencyImage.CGImage;
         
@@ -120,7 +122,8 @@
     int minCellHeight = 0;
     int minCellWidth = 0;
     
-    double LFactor = 0.3;
+    double LFactor = 0.7;
+    double croppingFactorAlpha = 0.5;
     
     double laplacianRegularizationWeight = 0.0;
 
@@ -164,7 +167,7 @@
     }
     
     double lH = 1.0 * M / H * sqrt(laplacianRegularizationWeight);
-    for(int i = 0; i < N - 1; i++) {
+    for (int i = 0; i < N - 1; i++) {
         [L setEntryAtRow:(M + i) andColumn:(M + i) toValue:-lH];
         [L setEntryAtRow:(M + i) andColumn:(M + i + 1) toValue:lH];
     }
@@ -177,17 +180,18 @@
     double *sRawData = [s rawDataAsColumnMajor];
     
     Matrix *minW = [[Matrix alloc] initVectorWithSize:N];
-    [minW setAllEntriesToValue:minCellWidth];
+    [minW setAllEntriesToValue:minCellWidth * croppingFactorAlpha];
     
     Matrix *maxW = [[Matrix alloc] initVectorWithSize:N];
     [maxW setAllEntriesToValue:targetWidth];
     
     Matrix *minH = [[Matrix alloc] initVectorWithSize:M];
-    [minH setAllEntriesToValue:minCellHeight];
+    [minH setAllEntriesToValue:minCellHeight * croppingFactorAlpha];
     
     Matrix *maxH = [[Matrix alloc] initVectorWithSize:M];
     [maxH setAllEntriesToValue:targetHeight];
     
+    // first pass
     solution = [self.rangeSolver solveWithS:QRawData B:sRawData W:targetWidth H:targetHeight
                                        minW:[minW rawDataVector]
                                        maxW:[maxW rawDataVector]
@@ -197,8 +201,58 @@
     Matrix *sRows = [[Matrix alloc] initFromColumnMajorData:(solution + M) withRows:N andColumns:1];
     Matrix *sCols = [[Matrix alloc] initFromColumnMajorData:solution withRows:M andColumns:1];
     
+    [minW setAllEntriesToValue:minCellWidth];
+    for (int i = 0; i < M; i++) {
+        if ([sRows entryAtIndex:i] < minCellHeight) {
+            [minH setEntryAtIndex:i toValue:0];
+            [maxH setEntryAtIndex:i toValue:0];
+        } else {
+            break;
+        }
+    }
+    
+    for (int i = M - 1; i >= 0; i--) {
+        if ([sRows entryAtIndex:i] < minCellHeight) {
+            [minH setEntryAtIndex:i toValue:0];
+            [maxH setEntryAtIndex:i toValue:0];
+        } else {
+            break;
+        }
+    }
+    
+    [minH setAllEntriesToValue:minCellHeight];
+    for (int j = 0; j < N; j++) {
+        if ([sCols entryAtIndex:j] < minCellWidth) {
+            [minW setEntryAtIndex:j toValue:0];
+            [maxW setEntryAtIndex:j toValue:0];
+        }  else {
+            break;
+        }
+    }
+    
+    for (int j = N - 1; j >= 0; j--) {
+        if ([sCols entryAtIndex:j] < minCellWidth) {
+            [minW setEntryAtIndex:j toValue:0];
+            [maxW setEntryAtIndex:j toValue:0];
+        }  else {
+            break;
+        }
+    }
+    
+    solution = [self.rangeSolver solveWithS:QRawData B:sRawData W:targetWidth H:targetHeight
+                                       minW:[minW rawDataVector]
+                                       maxW:[maxW rawDataVector]
+                                       minH:[minH rawDataVector]
+                                       maxH:[maxH rawDataVector]];
+    
+    sRows = [[Matrix alloc] initFromColumnMajorData:(solution + M) withRows:N andColumns:1];
+    sCols = [[Matrix alloc] initFromColumnMajorData:solution withRows:M andColumns:1];
+    
     [sRows printMatrixWithName:@"sRows"];
     [sCols printMatrixWithName:@"sCols"];
+    
+    // TODO: add cropping into the retargeting process
+    //
     
     self.retargetedImage = [self generateRetargetedImageFromVectorColumn:[sCols rawDataVector] row:[sRows rawDataVector]];
 }

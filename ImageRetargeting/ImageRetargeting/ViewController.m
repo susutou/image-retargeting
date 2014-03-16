@@ -72,14 +72,19 @@
 
 - (IBAction)shrinkImage:(UIButton *)sender {
     
-    self.solver.currentWidth = self.solver.width * 0.6;
-    self.solver.currentHeight = self.solver.height;
+    self.view.userInteractionEnabled = NO;
     
-    [self.solver resizeToHeight:self.solver.height width:self.solver.width * 0.6];
+    if (self.solver.currentWidth >= 0.1 * self.solver.width) {
+        self.solver.currentWidth = self.solver.currentWidth - self.solver.width * 0.05;
+    }
+    
+    [self.solver resizeToHeight:self.solver.height width:self.solver.currentWidth];
     
     //GradientOperator *operator = [[GradientOperator alloc] init];
     //self.imageView.image = [ImageHelper modifyImage:self.imageView.image withOperator:operator];
     self.imageView.image = self.solver.retargetedImage;
+    
+    self.view.userInteractionEnabled = YES;
 }
 
 - (IBAction)showSaliencyMap:(UIButton *)sender

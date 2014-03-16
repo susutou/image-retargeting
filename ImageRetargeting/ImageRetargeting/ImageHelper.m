@@ -278,6 +278,8 @@
         gradient[i] = gradient[i] / maxGradient * 250;
     }
     
+    // TODO: face-detection
+    
     free(grayscaleData);
     free(xGradient);
     free(yGradient);
