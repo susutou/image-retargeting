@@ -141,7 +141,6 @@
     }
     
     while (reduced_width--) {
-        cur_width--;
         for (int y = 0; y < height; y++) {
             for (int x= 0; x < cur_width; x++) {
                 // calculate the intensity with parameters:
@@ -195,6 +194,7 @@
             data[4*(y*width + cur_width-1) + 2] = 255;
             data[4*(y*width + cur_width-1) + 3] = 255;
         }
+        cur_width--;
     }
     
     free(dp);
@@ -423,7 +423,6 @@
     }
     
     while (reduced_height--) {
-        cur_height--;
         for (int x = 0; x < width; x++) {
             for (int y= 0; y < cur_height; y++) {
                 // calculate the intensity with parameters:
@@ -477,6 +476,7 @@
             data[4*((cur_height-1)*width + x) + 2] = 255;
             data[4*((cur_height-1)*width + x) + 3] = 255;
         }
+        cur_height--;
     }
     
     free(dp);
