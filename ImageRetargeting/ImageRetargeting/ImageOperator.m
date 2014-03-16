@@ -10,4 +10,9 @@
 
 @implementation ImageOperator
 
+- (void)changeImage:(CGImageRef)imageRef withData:(unsigned char *)data
+{
+    // implemented by its subclasses
+}
+
 @end
