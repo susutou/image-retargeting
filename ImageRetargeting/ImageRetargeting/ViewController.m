@@ -72,6 +72,9 @@
 
 - (IBAction)shrinkImage:(UIButton *)sender {
     
+    self.solver.currentWidth = self.solver.width * 0.6;
+    self.solver.currentHeight = self.solver.height;
+    
     [self.solver resizeToHeight:self.solver.height width:self.solver.width * 0.6];
     
     //GradientOperator *operator = [[GradientOperator alloc] init];

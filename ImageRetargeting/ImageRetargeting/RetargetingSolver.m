@@ -28,12 +28,12 @@
 {
     self = [super init];
     if (self != nil) {
-        self.originalImage = image;
+        self.originalImage = [UIImage imageWithUIImage:image withLongEdgeAs:600];
         self.saliencyImage = [UIImage imageWithUIImage:image withLongEdgeAs:LONG_EDGE];
         self.numRows = M;
         self.numCols = N;
-        self.height = CGImageGetHeight(image.CGImage);
-        self.width = CGImageGetWidth(image.CGImage);
+        self.height = CGImageGetHeight(self.originalImage.CGImage);
+        self.width = CGImageGetWidth(self.originalImage.CGImage);
         
         CGImageRef imageRef = self.saliencyImage.CGImage;
         
@@ -120,7 +120,7 @@
     int minCellHeight = 0;
     int minCellWidth = 0;
     
-    double LFactor = 0.7;
+    double LFactor = 0.3;
     
     double laplacianRegularizationWeight = 0.0;
 
@@ -199,13 +199,48 @@
     
     [sRows printMatrixWithName:@"sRows"];
     [sCols printMatrixWithName:@"sCols"];
+    
+    self.retargetedImage = [self generateRetargetedImageFromVectorColumn:[sCols rawDataVector] row:[sRows rawDataVector]];
 }
 
 - (UIImage *)generateRetargetedImageFromVectorColumn:(double *)sCol row:(double *)sRow
 {
+    CGSize size = CGSizeMake(self.currentWidth, self.currentHeight);
+    CGImageRef imageRef = self.originalImage.CGImage;
     
+    UIGraphicsBeginImageContext(size);
     
-    return NULL;
+    int accHeight = 0;
+    int accWidth = 0;
+    
+    int cellWidth = self.width / N;
+    int cellHeight = self.height / M;
+    
+    for (int i = 0; i < M; i++) {
+        accWidth = 0;
+        for (int j = 0; j < M; j++) {
+            // crop rectangle
+            CGRect cropRect = CGRectMake(j * cellWidth, i * cellHeight, cellWidth, cellHeight);
+            
+            // resize rectangle
+            CGRect resizeRect = CGRectMake(accWidth, accHeight, sCol[j], sRow[i]);
+            
+            // image portion croped with cropRect
+            CGImageRef imageCellRef = CGImageCreateWithImageInRect(imageRef, cropRect);
+            UIImage *imageCell = [UIImage imageWithCGImage:imageCellRef];
+            
+            // draw image cell to context
+            [imageCell drawInRect:resizeRect];
+            
+            accWidth += sCol[j];
+        }
+        accHeight += sRow[i];
+    }
+    
+    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return result;
 }
 
 @end
