@@ -376,96 +376,90 @@
     double *energy = calloc(width*(height+added_height) , sizeof(double));
     double *dp = calloc(width*(height+added_height), sizeof(double));
     int *direction = calloc(width*(height+added_height), sizeof(int));
-    int *to_repeat_from = calloc(added_height, sizeof(int)); // selected cells on the right-most column
+    int *to_delete = calloc(width, sizeof(int)); // actually it is for repeation
     int *repeat_times = calloc(width*height, sizeof(int));
+    int *mapped_coor = calloc(2*width*height, sizeof(int));
+    unsigned char *data_copy = calloc(4*width*height, sizeof(unsigned char));
+    memcpy(data_copy, data, 4*width*height);
     uint8_t r, g, b;
-    
-    // dynamic programming
-    for (int y = 0; y < height + added_height; y++){
-        dp[y * width + 0] = 0.0;
-    }
-    
-
-    for (int x = 0; x < width; x++) {
-        for (int y= 0; y < height; y++) {
-            // calculate the intensity with parameters:
-            // 0.2989, 0.5870, 0.1140
-            r = data[4 * (y * width + x) + 0];
-            g = data[4 * (y * width + x) + 1];
-            b = data[4 * (y * width + x) + 2];
-            energy[y * width + x] = 0.2989*r + 0.5870*g + 0.1140*b;
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            mapped_coor[2 * (y*width + x) + 0] = x;
+            mapped_coor[2 * (y*width + x) + 1] = y;
+            repeat_times[y*width + x] = 1;
         }
     }
     
-    for (int x = 1; x < width; x++) {
-        for (int y = 0; y < height; y++) {
-            dp[y*width + x] = 999999.9;
-            for (int y_delta = -1; y_delta <= 1; y_delta++) {
-                if (y+y_delta >= 0 && y+y_delta < height) {
-                    double new_value = dp[(y+y_delta)*width + (x-1)] +
-                    fabs(energy[y*width + x] - energy[(y+y_delta)*width + x-1]);
-                    if (new_value < dp[y*width + x]) {
-                        dp[y*width + x] = new_value;
-                        direction[y*width + x] = y_delta;
+    // dynamic programming
+    for (int y = 0; y < height; y++){
+        dp[y * width + 0] = 0.0;
+    }
+    
+    int cur_height = height;
+    while (cur_height > height - added_height) {
+        for (int x = 0; x < width; x++) {
+            for (int y= 0; y < cur_height; y++) {
+                // calculate the intensity with parameters:
+                // 0.2989, 0.5870, 0.1140
+                r = data[4 * (y * width + x) + 0];
+                g = data[4 * (y * width + x) + 1];
+                b = data[4 * (y * width + x) + 2];
+                energy[y * width + x] = 0.2989*r + 0.5870*g + 0.1140*b;
+            }
+        }
+        
+        for (int x = 1; x < width; x++) {
+            for (int y = 0; y < cur_height; y++) {
+                dp[y*width + x] = 999999.9;
+                for (int y_delta = -1; y_delta <= 1; y_delta++) {
+                    if (y+y_delta >=0 && y+y_delta<cur_height) {
+                        double new_value = dp[(y+y_delta)*width + (x-1)] +
+                        fabs(energy[y*width + x] - energy[(y+y_delta)*width + x-1]);
+                        if (new_value < dp[y*width + x]) {
+                            dp[y*width + x] = new_value;
+                            direction[y*width + x] = y_delta;
+                        }
                     }
                 }
             }
         }
-    }
-    
-    // select added_height number of smallest numbers
-    for (int i = 0; i < added_height; i++) {
-        to_repeat_from[i] = -1;
-    }
-    for (int y = 0; y < height; y++) {
-        for (int i=0; i < added_height; i++) {
-            if ((to_repeat_from[i]==-1) || (dp[width*y + width-1] < dp[width*to_repeat_from[i] + width-1])) {
-                for (int j=added_height-1; j>i; j--) {
-                    to_repeat_from[j] = to_repeat_from[j-1];
-                }
-                to_repeat_from[i] = y;
-                break;
+        
+        double bottom_min_energy = 999999.9;
+        for (int y = 0; y < cur_height; y++) {
+            if (dp[width * y + width-1] < bottom_min_energy) {
+                to_delete[width-1] = y;
+                bottom_min_energy = dp[width * y + width-1];
             }
         }
-        int a0 = to_repeat_from[0];
-        int a1 = to_repeat_from[1];
-        int a2 = to_repeat_from[2];
-        int a3 = to_repeat_from[3];
-        int a4 = to_repeat_from[4];
-        int a5 = to_repeat_from[5];
-        int a6 = to_repeat_from[6];
-//        double b0 = dp[width-1 + width * 0];
-//        double b1 = dp[width-1 + width * 1];
-//        double b2 = dp[width-1 + width * 2];
-//        double b3 = dp[width-1 + width * 3];
-//        double b4 = dp[width-1 + width * 4];
-//        double b5 = dp[width-1 + width * 5];
-    }
-    
-    int a0 = to_repeat_from[0];
-    int a1 = to_repeat_from[1];
-    int a2 = to_repeat_from[2];
-    int a3 = to_repeat_from[3];
-    int a4 = to_repeat_from[4];
-    int a5 = to_repeat_from[5];
-    int a6 = to_repeat_from[6];
-    
-    // generate repeat_times matrix
-    for (int y = 0; y<height; y++) {
+        for (int x = (int)width-2; x>=0; x--) {
+            to_delete[x] = to_delete[x+1] + direction[to_delete[x+1]*width + x+1];
+        }
+        
+        // mark the repeat position
         for (int x = 0; x<width; x++) {
-            repeat_times[y*width + x] = 1;
+            //repeat_times[to_delete[x] * width + x] += 1;
+            int mapped_x = mapped_coor[2*(to_delete[x] * width + x) + 0];
+            int mapped_y = mapped_coor[2*(to_delete[x] * width + x) + 1];
+            repeat_times[mapped_y * width + mapped_x] += 1;
         }
-    }
-    for (int i = 0; i<added_height; i++) {
-        int x = width-1;
-        int y = to_repeat_from[i];
-        repeat_times[y*width + x] += 1;
-        for (x = width-2; x>=0; x--) {
-            y = direction[y*width + x+1] + y;
-            repeat_times[y*width + x] += 1;
+        // shrink image data
+        for (int x = 0; x<width; x++) {
+            for (int y = 0; y < cur_height-1; y++) {
+                if (y >= to_delete[x]) {
+                    data[4*(y*width + x) + 0] = data[4*((y+1)*width + x) + 0];
+                    data[4*(y*width + x) + 1] = data[4*((y+1)*width + x) + 1];
+                    data[4*(y*width + x) + 2] = data[4*((y+1)*width + x) + 2];
+                    data[4*(y*width + x) + 3] = data[4*((y+1)*width + x) + 3];
+                    mapped_coor[2*(y*width + x) + 0] = mapped_coor[2*((y+1)*width + x) + 0];
+                    mapped_coor[2*(y*width + x) + 1] = mapped_coor[2*((y+1)*width + x) + 1];
+                }
+            }
         }
-    }
+        cur_height--;
+    }// while
+    
     // repeated the pixels
+    memcpy(data, data_copy, 4*width*height);
     for (int x = 0; x < width; x++) {
         int y2 = height + added_height - 1; // index for new matrix
         for (int y1 = height-1; y1>=0; y1--) {
@@ -481,9 +475,10 @@
     
     free(dp);
     free(direction);
-    free(to_repeat_from);
     free(energy);
     free(repeat_times);
+    free(mapped_coor);
+    free(data_copy);
 }
 
 // TODO: add face-detection
