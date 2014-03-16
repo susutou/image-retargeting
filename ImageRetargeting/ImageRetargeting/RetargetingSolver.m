@@ -40,8 +40,8 @@
         CGImageRef imageRef = self.saliencyImage.CGImage;
         
         self.imageRawData = [ImageHelper getRawDataFromImage:imageRef];
-        double *gradient = [ImageHelper getGradientMatrixForImage:imageRef withData:self.imageRawData];
-        self.gradient = [ImageHelper expandedGradientForImage:imageRef withGradient:gradient];
+        double *gradient = [RetargetingSolver getGradientMatrixForImage:imageRef withData:self.imageRawData];
+        self.gradient = [RetargetingSolver expandedGradientForImage:imageRef withGradient:gradient];
         
         [self calculateSaliencyMatrix];
         
@@ -296,6 +296,100 @@
     
     return result;
 }
+
++ (double *) getGradientMatrixForImage:(CGImageRef)imageRef withData:(unsigned char *)data
+{
+    NSUInteger width = CGImageGetWidth(imageRef);
+    NSUInteger height = CGImageGetHeight(imageRef);
+    
+    double *grayscaleData = calloc(height * width, sizeof(double));
+    
+    // convert the image to grayscale
+    for (int i = 0; i < width * height; i += 1) {
+        int r = data[i * 4], g = data[i * 4 + 1], b = data[i * 4 + 2];
+        double intensity = r * 0.2989 + g * 0.5870 + b * 0.1140;
+        grayscaleData[i] = intensity;
+    }
+    
+    double *xGradient = calloc(height * width, sizeof(double));
+    double *yGradient = calloc(height * width, sizeof(double));
+    double *gradient = calloc(height * width, sizeof(double));
+    
+    double A[3][3];
+    
+    for (int i = 1; i < width - 1; i++) {
+        for (int j = 1; j < height - 1; j++) {
+            A[0][0] = grayscaleData[(j - 1) * width + (i - 1)];
+            A[0][1] = grayscaleData[(j) * width + (i - 1)];
+            A[0][2] = grayscaleData[(j + 1) * width + (i - 1)];
+            A[1][0] = grayscaleData[(j - 1) * width + (i)];
+            A[1][1] = grayscaleData[(j) * width + (i)];
+            A[1][2] = grayscaleData[(j + 1) * width + (i)];
+            A[2][0] = grayscaleData[(j - 1) * width + (i + 1)];
+            A[2][1] = grayscaleData[(j) * width + (i + 1)];
+            A[2][2] = grayscaleData[(j + 1) * width + (i + 1)];
+            
+            NSUInteger k = j * width + i;
+            
+            // compute Sobel kernel gradient
+            xGradient[k] = -1 * A[0][0] - 2 * A[1][0] - 1 * A[2][0] + 1 * A[0][2] + 2 * A[1][2] + 1 * A[2][2];
+            yGradient[k] = -1 * A[0][0] - 2 * A[0][1] - 1 * A[0][2] + 1 * A[2][0] + 2 * A[2][1] + 1 * A[2][2];
+            gradient[k] = sqrt(xGradient[k] * xGradient[k] + yGradient[k] * yGradient[k]);
+            
+        }
+    }
+    
+    // normalizing gradient
+    double maxGradient = 0;
+    
+    for (int i = 0; i < width * height; i++) {
+        if (gradient[i] > maxGradient) {
+            maxGradient = gradient[i];
+        }
+    }
+    
+    for (int i = 0; i < width * height; i++) {
+        gradient[i] = gradient[i] / maxGradient * 250;
+    }
+    
+    // TODO: face-detection
+    
+    free(grayscaleData);
+    free(xGradient);
+    free(yGradient);
+    
+    return gradient;
+}
+
++ (double *)expandedGradientForImage:(CGImageRef)imageRef withGradient:(double *)gradient
+{
+    NSUInteger width = CGImageGetWidth(imageRef);
+    NSUInteger height = CGImageGetHeight(imageRef);
+    
+    double *expandedGradient = calloc(height * width, sizeof(double));
+    int d = 4;  // stroke width
+    
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            NSUInteger k = j * width + i;
+            for (int dx = -d; dx <= d; dx++) {
+                for (int dy = -d; dy < d; dy++) {
+                    double dist = sqrt(dx * dx + dy * dy);
+                    if (dist <= d) {
+                        int xn = i + dx;
+                        int yn = j + dy;
+                        if (0 <= xn && xn < width && 0 <= yn && yn < height) {
+                            expandedGradient[k] = MAX(expandedGradient[k], (0.5 + 0.5 * (d * d - dist * dist) / (d * d)) * gradient[yn * width + xn]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return expandedGradient;
+}
+
 
 @end
 
