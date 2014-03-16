@@ -337,8 +337,6 @@
     
 }
 
-// TODO: add face-detection
-
 @end
 
 

@@ -96,19 +96,19 @@
         }
     }
     
-    for (int i = 0; i < self.numRows; i++) {
-        for (int j = 0; j < self.numCols; j++) {
-            for (int iCell = 0; iCell < cellHeight; iCell++) {
-                for (int jCell = 0; jCell < cellWidth; jCell++) {
-                    int iGlobal = i * cellHeight + iCell;
-                    int jGlobal = j * cellWidth + jCell;
-                    int k = iGlobal * width + jGlobal;
-                    
-                    self.gradient[k] = 250 * [self.saliencyMatrix entryAtRow:i andColumn:j] / max;
-                }
-            }
-        }
-    }
+//    for (int i = 0; i < self.numRows; i++) {
+//        for (int j = 0; j < self.numCols; j++) {
+//            for (int iCell = 0; iCell < cellHeight; iCell++) {
+//                for (int jCell = 0; jCell < cellWidth; jCell++) {
+//                    int iGlobal = i * cellHeight + iCell;
+//                    int jGlobal = j * cellWidth + jCell;
+//                    int k = iGlobal * width + jGlobal;
+//                    
+//                    self.gradient[k] = 250 * [self.saliencyMatrix entryAtRow:i andColumn:j] / max;
+//                }
+//            }
+//        }
+//    }
 }
 
 - (void)resizeToHeight:(int)targetHeight width:(int)targetWidth
@@ -201,6 +201,8 @@
     Matrix *sRows = [[Matrix alloc] initFromColumnMajorData:(solution + M) withRows:N andColumns:1];
     Matrix *sCols = [[Matrix alloc] initFromColumnMajorData:solution withRows:M andColumns:1];
     
+    
+    // second pass, with cropping
     [minW setAllEntriesToValue:minCellWidth];
     for (int i = 0; i < M; i++) {
         if ([sRows entryAtIndex:i] < minCellHeight) {
@@ -251,9 +253,6 @@
     [sRows printMatrixWithName:@"sRows"];
     [sCols printMatrixWithName:@"sCols"];
     
-    // TODO: add cropping into the retargeting process
-    //
-    
     self.retargetedImage = [self generateRetargetedImageFromVectorColumn:[sCols rawDataVector] row:[sRows rawDataVector]];
 }
 
@@ -295,6 +294,32 @@
     UIGraphicsEndImageContext();
     
     return result;
+}
+
++ (void)markFacesInGradientMatrix:(double *)gradient forImage:(CGImageRef)imageRef
+{
+    // int height = CGImageGetHeight(imageRef);
+    int width = CGImageGetWidth(imageRef);
+    
+    CIImage *imageForDetection = [CIImage imageWithCGImage:imageRef];
+    
+    CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil
+                                              options:[NSDictionary dictionaryWithObject:CIDetectorAccuracyHigh forKey:CIDetectorAccuracy]];
+    
+    NSArray *features = [detector featuresInImage:imageForDetection];
+    
+    for (CIFaceFeature *faceFeature in features) {
+        int x = faceFeature.bounds.origin.x;
+        int y = faceFeature.bounds.origin.y;
+        int boundHeight = faceFeature.bounds.size.height;
+        int boundWidth = faceFeature.bounds.size.width;
+        
+        for (int i = x; i < x + boundHeight; i++) {
+            for (int j = y; j < y + boundWidth; j++) {
+                gradient[j * width + i] = 250;
+            }
+        }
+    }
 }
 
 + (double *) getGradientMatrixForImage:(CGImageRef)imageRef withData:(unsigned char *)data
@@ -353,6 +378,7 @@
     }
     
     // TODO: face-detection
+    [RetargetingSolver markFacesInGradientMatrix:gradient forImage:imageRef];
     
     free(grayscaleData);
     free(xGradient);
