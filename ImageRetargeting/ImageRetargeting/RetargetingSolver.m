@@ -15,7 +15,7 @@
 
 @implementation RetargetingSolver
 
-- (id) init
+- (id)init
 {
     self = [super init];
     if (self != nil) {
@@ -30,7 +30,7 @@
     free(self.gradient);
 }
 
-- (id) initWithImage:(UIImage *)image
+- (id)initWithImage:(UIImage *)image
 {
     self = [super init];
     if (self != nil) {
@@ -82,7 +82,7 @@
     
     for (int i = 0; i < self.numRows; i++) {
         for (int j = 0; j < self.numCols; j++) {
-            int average = 0;
+            double average = 0;
             
             for (int iCell = 0; iCell < cellHeight; iCell++) {
                 for (int jCell = 0; jCell < cellWidth; jCell++) {
@@ -103,19 +103,19 @@
         }
     }
     
-    for (int i = 0; i < self.numRows; i++) {
-        for (int j = 0; j < self.numCols; j++) {
-            for (int iCell = 0; iCell < cellHeight; iCell++) {
-                for (int jCell = 0; jCell < cellWidth; jCell++) {
-                    int iGlobal = i * cellHeight + iCell;
-                    int jGlobal = j * cellWidth + jCell;
-                    int k = iGlobal * width + jGlobal;
-                    
-                    self.gradient[k] = 250 * [self.saliencyMatrix entryAtRow:i andColumn:j] / max;
-                }
-            }
-        }
-    }
+//    for (int i = 0; i < self.numRows; i++) {
+//        for (int j = 0; j < self.numCols; j++) {
+//            for (int iCell = 0; iCell < cellHeight; iCell++) {
+//                for (int jCell = 0; jCell < cellWidth; jCell++) {
+//                    int iGlobal = i * cellHeight + iCell;
+//                    int jGlobal = j * cellWidth + jCell;
+//                    int k = iGlobal * width + jGlobal;
+//                    
+//                    self.gradient[k] = 250 * [self.saliencyMatrix entryAtRow:i andColumn:j] / max;
+//                }
+//            }
+//        }
+//    }
 }
 
 - (void)resizeToHeight:(int)targetHeight width:(int)targetWidth
@@ -126,10 +126,10 @@
     int W = self.width;
     int H = self.height;
     
-    int minCellHeight = 0;
-    int minCellWidth = 0;
+    double minCellHeight = 0;
+    double minCellWidth = 0;
     
-    double LFactor = 0.3;
+    double LFactor = 0.7;
     double croppingFactorAlpha = 0.5;
     
     double laplacianRegularizationWeight = 0.0;
@@ -137,14 +137,14 @@
     Matrix *omega = self.saliencyMatrix;
     
     if (targetRatio > sourceRatio) {
-        minCellWidth = LFactor * sourceRatio * targetHeight / self.numCols;
-        minCellHeight = LFactor * targetHeight / self.numRows;
+        minCellWidth = 1.0 * LFactor * sourceRatio * targetHeight / self.numCols;
+        minCellHeight = 1.0 * LFactor * targetHeight / self.numRows;
     } else {
-        minCellWidth = LFactor * targetWidth / self.numCols;
-        minCellHeight = LFactor / sourceRatio * targetWidth / self.numRows;
+        minCellWidth = 1.0 * LFactor * targetWidth / self.numCols;
+        minCellHeight = 1.0 * LFactor / sourceRatio * targetWidth / self.numRows;
     }
     
-    NSLog(@"minCellHeight = %d, minCellWidth = %d", minCellHeight, minCellWidth);
+    NSLog(@"minCellHeight = %f, minCellWidth = %f", minCellHeight, minCellWidth);
     
     // solve naive retargeting
     // vector s
@@ -208,45 +208,69 @@
     Matrix *sRows = [[Matrix alloc] initFromColumnMajorData:(solution + M) withRows:N andColumns:1];
     Matrix *sCols = [[Matrix alloc] initFromColumnMajorData:solution withRows:M andColumns:1];
     
+//    [sRows printMatrixWithName:@"sRows"];
+//    [sCols printMatrixWithName:@"sCols"];
     
     // second pass, with cropping
-    [minW setAllEntriesToValue:minCellWidth];
-    for (int i = 0; i < M; i++) {
-        if ([sRows entryAtIndex:i] < minCellHeight) {
-            [minH setEntryAtIndex:i toValue:0];
-            [maxH setEntryAtIndex:i toValue:0];
-        } else {
-            break;
-        }
-    }
+    double wLow = (1 + croppingFactorAlpha) / 2.0 * minCellWidth;
+    double wHigh = (1 + 1.0 / LFactor) / 2.0 * minCellWidth;
     
-    for (int i = M - 1; i >= 0; i--) {
-        if ([sRows entryAtIndex:i] < minCellHeight) {
-            [minH setEntryAtIndex:i toValue:0];
-            [maxH setEntryAtIndex:i toValue:0];
-        } else {
-            break;
-        }
-    }
+    double hLow = (1 + croppingFactorAlpha) / 2.0 * minCellHeight;
+    double hHigh = (1 + 1.0 / LFactor) / 2.0 * minCellHeight;
     
     [minH setAllEntriesToValue:minCellHeight];
-    for (int j = 0; j < N; j++) {
-        if ([sCols entryAtIndex:j] < minCellWidth) {
-            [minW setEntryAtIndex:j toValue:0];
-            [maxW setEntryAtIndex:j toValue:0];
-        }  else {
-            break;
+    for (int i = 0; i < M; i++) {
+        double cropHeightBound = (i - 1) * 1.0 / N * hLow + (1 - (i - 1) * 1.0 / N) * hHigh;
+        if ([sRows entryAtIndex:i] < cropHeightBound) {
+            [minH setEntryAtIndex:i toValue:0];
+            [maxH setEntryAtIndex:i toValue:0];
         }
     }
     
-    for (int j = N - 1; j >= 0; j--) {
-        if ([sCols entryAtIndex:j] < minCellWidth) {
+//    for (int i = 0; i < M; i++) {
+//        if ([sRows entryAtIndex:i] <= minCellHeight) {
+//            [minH setEntryAtIndex:i toValue:0];
+//            [maxH setEntryAtIndex:i toValue:0];
+//        } else {
+//            break;
+//        }
+//    }
+//    
+//    for (int i = M - 1; i >= 0; i--) {
+//        if ([sRows entryAtIndex:i] <= minCellHeight) {
+//            [minH setEntryAtIndex:i toValue:0];
+//            [maxH setEntryAtIndex:i toValue:0];
+//        } else {
+//            break;
+//        }
+//    }
+    
+    [minW setAllEntriesToValue:minCellWidth];
+    for (int j = 0; j < N; j++) {
+        double cropWidthBound = (j - 1) * 1.0 / N * wLow + (1 - (j - 1) * 1.0 / N) * wHigh;
+        if ([sCols entryAtIndex:j] < cropWidthBound) {
             [minW setEntryAtIndex:j toValue:0];
             [maxW setEntryAtIndex:j toValue:0];
-        }  else {
-            break;
         }
     }
+    
+//    for (int j = 0; j < N; j++) {
+//        if ([sCols entryAtIndex:j] <= minCellWidth) {
+//            [minW setEntryAtIndex:j toValue:0];
+//            [maxW setEntryAtIndex:j toValue:0];
+//        } else {
+//            break;
+//        }
+//    }
+//    
+//    for (int j = N - 1; j >= 0; j--) {
+//        if ([sCols entryAtIndex:j] <= minCellWidth) {
+//            [minW setEntryAtIndex:j toValue:0];
+//            [maxW setEntryAtIndex:j toValue:0];
+//        } else {
+//            break;
+//        }
+//    }
     
     solution = [self.rangeSolver solveWithS:QRawData B:sRawData W:targetWidth H:targetHeight
                                        minW:[minW rawDataVector]
@@ -257,8 +281,8 @@
     sRows = [[Matrix alloc] initFromColumnMajorData:(solution + M) withRows:N andColumns:1];
     sCols = [[Matrix alloc] initFromColumnMajorData:solution withRows:M andColumns:1];
     
-    [sRows printMatrixWithName:@"sRows"];
-    [sCols printMatrixWithName:@"sCols"];
+//    [sRows printMatrixWithName:@"sRows"];
+//    [sCols printMatrixWithName:@"sCols"];
     
     self.retargetedImage = [self generateRetargetedImageFromVectorColumn:[sCols rawDataVector] row:[sRows rawDataVector]];
 }
@@ -333,9 +357,10 @@
         
         int hairStartX = x;
         int hairStartY = y;
-        int hairEndX = x + boundWidth * 2;
-        int hairEndY = y + boundHeight * 2;
-        hairEndY = hairEndY > width - 1 ? width - 1 : hairEndY;
+        int hairEndX = x + boundWidth;
+        hairEndX = hairEndX > width - 1 ? width - 1 : hairEndX;
+        int hairEndY = y + boundHeight * 1.5;
+        hairEndY = hairEndY > height - 1 ? height - 1 : hairEndY;
         
         for (int i = hairStartX; i < hairEndX; i++) {
             for (int j = hairStartY; j < hairEndY; j++) {
@@ -362,7 +387,7 @@
     // body: (x - faceWidth, 0) -> (x + faceWidth, y)
 }
 
-- (double *) getGradientMatrixForImage:(CGImageRef)imageRef withData:(unsigned char *)data
+- (double *)getGradientMatrixForImage:(CGImageRef)imageRef withData:(unsigned char *)data
 {
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);
