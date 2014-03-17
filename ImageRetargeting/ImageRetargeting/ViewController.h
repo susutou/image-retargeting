@@ -12,6 +12,8 @@
 #import "UIImage+Resize.h"
 #import "GradientOperator.h"
 
+#import "MBProgressHUD.h"
+
 @interface ViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;

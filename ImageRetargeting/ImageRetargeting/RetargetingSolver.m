@@ -332,9 +332,9 @@
         }
         
         int hairStartX = x;
-        int hairStartY = y + boundHeight;
-        int hairEndX = x + boundWidth;
-        int hairEndY = hairStartY + boundHeight / 3;
+        int hairStartY = y;
+        int hairEndX = x + boundWidth * 2;
+        int hairEndY = y + boundHeight * 2;
         hairEndY = hairEndY > width - 1 ? width - 1 : hairEndY;
         
         for (int i = hairStartX; i < hairEndX; i++) {

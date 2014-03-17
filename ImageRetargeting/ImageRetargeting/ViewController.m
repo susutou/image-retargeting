@@ -30,13 +30,13 @@
 
 #pragma - UIImagePickerController delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    
     UIImage *chosenImage = info[UIImagePickerControllerOriginalImage];
+    
     self.solver = [[RetargetingSolver alloc] initWithImage:chosenImage];
     
-    self.imageView.image = [UIImage imageWithUIImage:chosenImage withLongEdgeAs:400];
-    
     [picker dismissViewControllerAnimated:YES completion:NULL];
+    
+    self.imageView.image = [UIImage imageWithUIImage:chosenImage withLongEdgeAs:400];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
@@ -61,7 +61,6 @@
 
 // action for photo selecting button
 - (IBAction)selectPhoto:(UIBarButtonItem *)sender {
-    
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
@@ -80,7 +79,52 @@
         self.solver.currentWidth = self.solver.currentWidth - self.solver.width * 0.05;
     }
     
-    [self.solver resizeToHeight:self.solver.height width:self.solver.currentWidth];
+    [self.solver resizeToHeight:self.solver.currentHeight width:self.solver.currentWidth];
+    
+    self.imageView.image = self.solver.retargetedImage;
+    
+    self.view.userInteractionEnabled = YES;
+}
+
+- (void)shrinkImageVerticallyQP
+{
+    self.view.userInteractionEnabled = NO;
+    
+    if (self.solver.currentHeight >= 0.1 * self.solver.height) {
+        self.solver.currentHeight = self.solver.currentHeight - self.solver.height * 0.05;
+    }
+    
+    [self.solver resizeToHeight:self.solver.currentHeight width:self.solver.currentWidth];
+    
+    self.imageView.image = self.solver.retargetedImage;
+    
+    self.view.userInteractionEnabled = YES;
+}
+
+- (void)growImageHorizontallyQP
+{
+    self.view.userInteractionEnabled = NO;
+    
+    if (self.solver.currentWidth < 2 * self.solver.width) {
+        self.solver.currentWidth = self.solver.currentWidth + self.solver.width * 0.05;
+    }
+    
+    [self.solver resizeToHeight:self.solver.currentHeight width:self.solver.currentWidth];
+    
+    self.imageView.image = self.solver.retargetedImage;
+    
+    self.view.userInteractionEnabled = YES;
+}
+
+- (void)growImageVerticallyQP
+{
+    self.view.userInteractionEnabled = NO;
+    
+    if (self.solver.currentHeight < 2 * self.solver.height) {
+        self.solver.currentHeight = self.solver.currentHeight + self.solver.height * 0.05;
+    }
+    
+    [self.solver resizeToHeight:self.solver.currentHeight width:self.solver.currentWidth];
     
     self.imageView.image = self.solver.retargetedImage;
     
@@ -150,7 +194,7 @@
         [self seamCarvingShrinkVertical];
     } else {
         // segmented-based retargeting
-        
+        [self shrinkImageVerticallyQP];
     }
 }
 
@@ -161,7 +205,7 @@
         // no compatible operations
     } else {
         // segmented-based retargeting
-        
+        [self growImageHorizontallyQP];
     }
 }
 
@@ -172,13 +216,28 @@
         [self seamCarvingEnlargeVertical];
     } else {
         // segmented-based retargeting
-        
+        [self growImageVerticallyQP];
     }
 }
 
 - (IBAction)savePicture:(UIBarButtonItem *)sender
 {
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        });
+    });
     UIImageWriteToSavedPhotosAlbum([[self imageView] image], nil, nil, nil);
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Image saved!"
+                                                    message:@"The image is saved successfully!"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
 
 @end
