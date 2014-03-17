@@ -24,4 +24,5 @@
 
 - (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender;
 - (IBAction)seamCarvingShrinkVertical:(UIButton *)sender;
+- (IBAction)seamCarvingEnlargeVertical:(UIButton *)sender;
 @end

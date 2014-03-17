@@ -11,6 +11,7 @@
 @interface ViewController ()
 @property int cur_effective_width;
 @property int cur_effective_height;
+@property UIImage* originalImageForSeamCarvingEnlarge;
 @end
 
 @implementation ViewController
@@ -98,7 +99,7 @@
         self.cur_effective_width = self.imageView.image.size.width;
     }
     const int kC_width_to_reduce = 10;
-    self.imageView.image = [ImageHelper modifyImageSeamCarvingShrinkHorizonal:self.imageView.image atWidth:self.cur_effective_width shringBy:kC_width_to_reduce];
+    self.imageView.image = [ImageHelper modifyImageSeamCarvingShrinkHorizonal:self.imageView.image atWidth:self.cur_effective_width shrinkBy:kC_width_to_reduce];
     self.cur_effective_width -= kC_width_to_reduce;
     self.view.userInteractionEnabled = YES;
 }
@@ -109,8 +110,24 @@
         self.cur_effective_height = self.imageView.image.size.height;
     }
     const int kC_height_to_reduce = 10;
-    self.imageView.image = [ImageHelper modifyImageSeamCarvingShrinkVertical:self.imageView.image atHeight:self.cur_effective_height shringBy:kC_height_to_reduce];
+    self.imageView.image = [ImageHelper modifyImageSeamCarvingShrinkVertical:self.imageView.image atHeight:self.cur_effective_height shrinkBy:kC_height_to_reduce];
     self.cur_effective_height -= kC_height_to_reduce;
     self.view.userInteractionEnabled = YES;
 }
+
+// + (UIImage *)modifyImageSeamCarvingEnlargeVertical:(UIImage*)image atHeight:(int)cur_height enlargeBy: (int)added_height;
+- (IBAction)seamCarvingEnlargeVertical:(UIButton *)sender {
+    self.view.userInteractionEnabled = NO;
+    if (self.cur_effective_height == -1) {
+        self.cur_effective_height = self.imageView.image.size.height;
+        self.originalImageForSeamCarvingEnlarge = self.imageView.image;
+    }
+    const int kC_height_to_add = 10;
+    if (self.cur_effective_height + kC_height_to_add < 2 * self.originalImageForSeamCarvingEnlarge.size.height) {
+        self.cur_effective_height += kC_height_to_add;
+        self.imageView.image = [ImageHelper modifyImageSeamCarvingEnlargeVertical: self.originalImageForSeamCarvingEnlarge enlargeBy: (self.cur_effective_height - self.originalImageForSeamCarvingEnlarge.size.height)];
+    }
+    self.view.userInteractionEnabled = YES;
+}
+
 @end
