@@ -64,7 +64,11 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="g2p-5y-CrY"/>
-                                    <barButtonItem systemItem="action" id="Feu-NC-CAy"/>
+                                    <barButtonItem systemItem="action" id="Feu-NC-CAy">
+                                        <connections>
+                                            <action selector="savePicture:" destination="vXZ-lx-hvc" id="gfh-V5-bY8"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="5dr-mm-2vM">

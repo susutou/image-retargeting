@@ -21,6 +21,9 @@
 
 - (IBAction)takePhoto:(UIBarButtonItem *)sender;
 - (IBAction)selectPhoto:(UIBarButtonItem *)sender;
+
+- (IBAction)savePicture:(UIBarButtonItem *)sender;
+
 - (IBAction)showSaliencyMap:(UIButton *)sender;
 
 - (IBAction)shrinkImageHorizontally:(UIBarButtonItem *)sender;

@@ -176,5 +176,9 @@
     }
 }
 
+- (IBAction)savePicture:(UIBarButtonItem *)sender
+{
+    UIImageWriteToSavedPhotosAlbum([[self imageView] image], nil, nil, nil);
+}
 
 @end
