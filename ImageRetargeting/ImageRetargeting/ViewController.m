@@ -163,7 +163,8 @@
 - (void)seamCarvingEnlargeVertical
 {
     self.view.userInteractionEnabled = NO;
-    if (self.cur_effective_height == -1) {
+    if (self.cur_effective_height < self.solver.originalImage.size.height) {
+        self.imageView.image = self.solver.originalImage;
         self.cur_effective_height = self.imageView.image.size.height;
         self.originalImageForSeamCarvingEnlarge = self.imageView.image;
     }
@@ -172,6 +173,7 @@
         self.cur_effective_height += kC_height_to_add;
         self.imageView.image = [ImageHelper modifyImageSeamCarvingEnlargeVertical: self.originalImageForSeamCarvingEnlarge enlargeBy: (self.cur_effective_height - self.originalImageForSeamCarvingEnlarge.size.height)];
     }
+    self.cur_effective_width = -1;
     self.view.userInteractionEnabled = YES;
 }
 
@@ -238,6 +240,11 @@
                                           cancelButtonTitle:@"OK"
                                           otherButtonTitles:nil];
     [alert show];
+}
+- (IBAction)changeMode:(UISegmentedControl *)sender {
+    self.imageView.image = self.solver.originalImage;
+    self.cur_effective_height = -1;
+    self.cur_effective_width = -1;
 }
 
 @end
