@@ -30,6 +30,7 @@
 
 @property (nonatomic, strong) UIImage *saliencyImage;
 @property (nonatomic, strong) UIImage *retargetedImage;
+@property (nonatomic, strong) UIImage *faceDetectionImage;
 
 @property (nonatomic) unsigned char *imageRawData;
 @property (nonatomic) double *gradient;

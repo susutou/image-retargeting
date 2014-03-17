@@ -53,7 +53,7 @@
     NSUInteger width = 0, height = 0;
     int orientation = image.imageOrientation;
     
-    if (orientation == 0) {
+    if (orientation == UIImageOrientationUp || orientation == UIImageOrientationDown) {
         width = CGImageGetWidth(imageRef);
         height = CGImageGetHeight(imageRef);
     } else {

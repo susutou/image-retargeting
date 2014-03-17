@@ -47,7 +47,7 @@
 #pragma - Mark button events
 
 // action for photo taking button
-- (IBAction)takePhoto:(UIButton *)sender {
+- (IBAction)takePhoto:(UIBarButtonItem *)sender {
     
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
@@ -59,7 +59,7 @@
 }
 
 // action for photo selecting button
-- (IBAction)selectPhoto:(UIButton *)sender {
+- (IBAction)selectPhoto:(UIBarButtonItem *)sender {
     
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;

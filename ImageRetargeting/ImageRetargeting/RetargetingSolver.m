@@ -8,9 +8,10 @@
 
 #import "RetargetingSolver.h"
 
-#define LONG_EDGE 200
+#define LONG_EDGE 400
 #define M 25
 #define N 25
+#define FACE_DETECTION_SCALE 4
 
 @implementation RetargetingSolver
 
@@ -24,11 +25,17 @@
     return self;
 }
 
+- (void)dealloc
+{
+    free(self.gradient);
+}
+
 - (id) initWithImage:(UIImage *)image
 {
     self = [super init];
     if (self != nil) {
         self.originalImage = [UIImage imageWithUIImage:image withLongEdgeAs:600];
+        //self.faceDetectionImage = [UIImage imageWithUIImage:image withLongEdgeAs:FACE_DETECTION_SCALE * LONG_EDGE];
         self.saliencyImage = [UIImage imageWithUIImage:image withLongEdgeAs:LONG_EDGE];
         self.numRows = M;
         self.numCols = N;
@@ -40,8 +47,8 @@
         CGImageRef imageRef = self.saliencyImage.CGImage;
         
         self.imageRawData = [ImageHelper getRawDataFromImage:imageRef];
-        double *gradient = [RetargetingSolver getGradientMatrixForImage:imageRef withData:self.imageRawData];
-        self.gradient = [RetargetingSolver expandedGradientForImage:imageRef withGradient:gradient];
+        double *gradient = [self getGradientMatrixForImage:imageRef withData:self.imageRawData];
+        self.gradient = [self expandedGradientForImage:imageRef withGradient:gradient];
         
         [self calculateSaliencyMatrix];
         
@@ -96,19 +103,19 @@
         }
     }
     
-//    for (int i = 0; i < self.numRows; i++) {
-//        for (int j = 0; j < self.numCols; j++) {
-//            for (int iCell = 0; iCell < cellHeight; iCell++) {
-//                for (int jCell = 0; jCell < cellWidth; jCell++) {
-//                    int iGlobal = i * cellHeight + iCell;
-//                    int jGlobal = j * cellWidth + jCell;
-//                    int k = iGlobal * width + jGlobal;
-//                    
-//                    self.gradient[k] = 250 * [self.saliencyMatrix entryAtRow:i andColumn:j] / max;
-//                }
-//            }
-//        }
-//    }
+    for (int i = 0; i < self.numRows; i++) {
+        for (int j = 0; j < self.numCols; j++) {
+            for (int iCell = 0; iCell < cellHeight; iCell++) {
+                for (int jCell = 0; jCell < cellWidth; jCell++) {
+                    int iGlobal = i * cellHeight + iCell;
+                    int jGlobal = j * cellWidth + jCell;
+                    int k = iGlobal * width + jGlobal;
+                    
+                    self.gradient[k] = 250 * [self.saliencyMatrix entryAtRow:i andColumn:j] / max;
+                }
+            }
+        }
+    }
 }
 
 - (void)resizeToHeight:(int)targetHeight width:(int)targetWidth
@@ -122,7 +129,7 @@
     int minCellHeight = 0;
     int minCellWidth = 0;
     
-    double LFactor = 0.7;
+    double LFactor = 0.3;
     double croppingFactorAlpha = 0.5;
     
     double laplacianRegularizationWeight = 0.0;
@@ -258,7 +265,9 @@
 
 - (UIImage *)generateRetargetedImageFromVectorColumn:(double *)sCol row:(double *)sRow
 {
-    CGSize size = CGSizeMake(self.currentWidth, self.currentHeight);
+    // CGSize size = CGSizeMake(self.currentWidth, self.currentHeight);
+    CGSize size = CGSizeMake(self.width, self.height);
+    
     CGImageRef imageRef = self.originalImage.CGImage;
     
     UIGraphicsBeginImageContext(size);
@@ -296,10 +305,10 @@
     return result;
 }
 
-+ (void)markFacesInGradientMatrix:(double *)gradient forImage:(CGImageRef)imageRef
+- (void)markFacesInGradientMatrix:(double *)gradient forImage:(CGImageRef)imageRef
 {
-    // int height = CGImageGetHeight(imageRef);
-    int width = CGImageGetWidth(imageRef);
+    int height = CGImageGetHeight(imageRef);
+    int width = CGImageGetWidth([[self saliencyImage] CGImage]);
     
     CIImage *imageForDetection = [CIImage imageWithCGImage:imageRef];
     
@@ -314,15 +323,46 @@
         int boundHeight = faceFeature.bounds.size.height;
         int boundWidth = faceFeature.bounds.size.width;
         
+        NSLog(@"x = %d, y = %d", x, y);
+        
         for (int i = x; i < x + boundHeight; i++) {
             for (int j = y; j < y + boundWidth; j++) {
-                gradient[j * width + i] = 250;
+                gradient[(height - j - 1) * width + i] = 250;
+            }
+        }
+        
+        int hairStartX = x;
+        int hairStartY = y + boundHeight;
+        int hairEndX = x + boundWidth;
+        int hairEndY = hairStartY + boundHeight / 3;
+        hairEndY = hairEndY > width - 1 ? width - 1 : hairEndY;
+        
+        for (int i = hairStartX; i < hairEndX; i++) {
+            for (int j = hairStartY; j < hairEndY; j++) {
+                gradient[(height - j - 1) * width + i] = 250;
+            }
+        }
+        
+        int bodyStartX = x - boundWidth;
+        bodyStartX = bodyStartX < 0 ? 0 : bodyStartX;
+        int bodyStartY = 0;
+        int bodyEndX = x + boundWidth + boundWidth;
+        bodyEndX = bodyEndX > width - 1 ? width - 1 : bodyEndX;
+        int bodyEndY = y;
+        
+        for (int i = bodyStartX; i < bodyEndX; i++) {
+            for (int j = bodyStartY; j < bodyEndY; j++) {
+                gradient[(height - j - 1) * width + i] = 250;
             }
         }
     }
+    
+    // try to mark hair and body?
+    // hair: (x, y + faceHeight) -> (x + faceWidth, y + (1 + 1/3) * faceHeight)
+    // body: (x - faceWidth, 0) -> (x + faceWidth, y)
 }
 
-+ (double *) getGradientMatrixForImage:(CGImageRef)imageRef withData:(unsigned char *)data
+- (double *) getGradientMatrixForImage:(CGImageRef)imageRef withData:(unsigned char *)data
 {
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);
@@ -378,7 +418,7 @@
     }
     
     // TODO: face-detection
-    [RetargetingSolver markFacesInGradientMatrix:gradient forImage:imageRef];
+    [self markFacesInGradientMatrix:gradient forImage:imageRef];
     
     free(grayscaleData);
     free(xGradient);
@@ -387,7 +427,7 @@
     return gradient;
 }
 
-+ (double *)expandedGradientForImage:(CGImageRef)imageRef withGradient:(double *)gradient
+- (double *)expandedGradientForImage:(CGImageRef)imageRef withGradient:(double *)gradient
 {
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);
