@@ -265,8 +265,8 @@
 
 - (UIImage *)generateRetargetedImageFromVectorColumn:(double *)sCol row:(double *)sRow
 {
-    // CGSize size = CGSizeMake(self.currentWidth, self.currentHeight);
-    CGSize size = CGSizeMake(self.width, self.height);
+    CGSize size = CGSizeMake(self.currentWidth, self.currentHeight);
+    // CGSize size = CGSizeMake(self.width, self.height);
     
     CGImageRef imageRef = self.originalImage.CGImage;
     

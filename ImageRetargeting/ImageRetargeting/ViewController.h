@@ -17,12 +17,15 @@
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) RetargetingSolver *solver;
 
+@property (strong, nonatomic) IBOutlet UISegmentedControl *modeControl;
+
 - (IBAction)takePhoto:(UIBarButtonItem *)sender;
 - (IBAction)selectPhoto:(UIBarButtonItem *)sender;
-- (IBAction)shrinkImage:(UIButton *)sender;
 - (IBAction)showSaliencyMap:(UIButton *)sender;
 
-- (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender;
-- (IBAction)seamCarvingShrinkVertical:(UIButton *)sender;
-- (IBAction)seamCarvingEnlargeVertical:(UIButton *)sender;
+- (IBAction)shrinkImageHorizontally:(UIBarButtonItem *)sender;
+- (IBAction)shrinkImageVertically:(UIBarButtonItem *)sender;
+- (IBAction)growImageHorizontally:(UIBarButtonItem *)sender;
+- (IBAction)growImageVertically:(UIBarButtonItem *)sender;
+
 @end

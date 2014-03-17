@@ -71,7 +71,8 @@
     self.cur_effective_height = -1;
 }
 
-- (IBAction)shrinkImage:(UIButton *)sender {
+- (void)shrinkImageHorizontallyQP
+{
     
     self.view.userInteractionEnabled = NO;
     
@@ -81,8 +82,6 @@
     
     [self.solver resizeToHeight:self.solver.height width:self.solver.currentWidth];
     
-    //GradientOperator *operator = [[GradientOperator alloc] init];
-    //self.imageView.image = [ImageHelper modifyImage:self.imageView.image withOperator:operator];
     self.imageView.image = self.solver.retargetedImage;
     
     self.view.userInteractionEnabled = YES;
@@ -93,7 +92,8 @@
     self.imageView.image = self.solver.saliencyImage;
 }
 
-- (IBAction)seamCarvingShrinkHorizonal:(UIButton *)sender {
+- (void)seamCarvingShrinkHorizonal
+{
     self.view.userInteractionEnabled = NO;
     if (self.cur_effective_width == -1) {
         self.cur_effective_width = self.imageView.image.size.width;
@@ -104,7 +104,8 @@
     self.view.userInteractionEnabled = YES;
 }
 
-- (IBAction)seamCarvingShrinkVertical:(UIButton *)sender {
+- (void)seamCarvingShrinkVertical
+{
     self.view.userInteractionEnabled = NO;
     if (self.cur_effective_height == -1) {
         self.cur_effective_height = self.imageView.image.size.height;
@@ -115,8 +116,8 @@
     self.view.userInteractionEnabled = YES;
 }
 
-// + (UIImage *)modifyImageSeamCarvingEnlargeVertical:(UIImage*)image atHeight:(int)cur_height enlargeBy: (int)added_height;
-- (IBAction)seamCarvingEnlargeVertical:(UIButton *)sender {
+- (void)seamCarvingEnlargeVertical
+{
     self.view.userInteractionEnabled = NO;
     if (self.cur_effective_height == -1) {
         self.cur_effective_height = self.imageView.image.size.height;
@@ -129,5 +130,51 @@
     }
     self.view.userInteractionEnabled = YES;
 }
+
+// general actions
+- (IBAction)shrinkImageHorizontally:(UIBarButtonItem *)sender
+{
+    if ([[self modeControl] selectedSegmentIndex] == 0) {
+        // seam carving
+        [self seamCarvingShrinkHorizonal];
+    } else {
+        // segmented-based retargeting
+        [self shrinkImageHorizontallyQP];
+    }
+}
+
+- (IBAction)shrinkImageVertically:(UIBarButtonItem *)sender
+{
+    if ([[self modeControl] selectedSegmentIndex] == 0) {
+        // seam carving
+        [self seamCarvingShrinkVertical];
+    } else {
+        // segmented-based retargeting
+        
+    }
+}
+
+- (IBAction)growImageHorizontally:(UIBarButtonItem *)sender
+{
+    if ([[self modeControl] selectedSegmentIndex] == 0) {
+        // seam carving
+        // no compatible operations
+    } else {
+        // segmented-based retargeting
+        
+    }
+}
+
+- (IBAction)growImageVertically:(UIBarButtonItem *)sender
+{
+    if ([[self modeControl] selectedSegmentIndex] == 0) {
+        // seam carving
+        [self seamCarvingEnlargeVertical];
+    } else {
+        // segmented-based retargeting
+        
+    }
+}
+
 
 @end
