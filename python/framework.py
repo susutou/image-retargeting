@@ -140,13 +140,13 @@ while True:
   pos = myWin.getMouse()
   print(pos)  # (x,y)
   if clickedOnRetarget(pos, red_button):
-    for i in range(500):
-      # one = retarget(one, randomDelete, 5)
-      retarget(one_mat, seamCarving, 1)
+    for i in range(5):
+      # one = retarget(one, randomDelete, 100)
+      retarget(one_mat, seamCarving, 20)
       one = convertMatrix2Image(one_mat)
       print("one: ", one.getWidth(), one.getHeight())
       one.setPosition(0, red_button.getHeight())
-      # one_white.draw(myWin)
+      one_white.draw(myWin)
       one.draw(myWin)
     print("clicked on retargeting button")
     
