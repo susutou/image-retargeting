@@ -64,7 +64,7 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="g2p-5y-CrY"/>
-                                    <barButtonItem systemItem="action" id="Feu-NC-CAy">
+                                    <barButtonItem systemItem="reply" id="Feu-NC-CAy">
                                         <connections>
                                             <action selector="savePicture:" destination="vXZ-lx-hvc" id="gfh-V5-bY8"/>
                                         </connections>
