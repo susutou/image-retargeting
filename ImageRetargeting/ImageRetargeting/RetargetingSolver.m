@@ -103,19 +103,19 @@
         }
     }
     
-//    for (int i = 0; i < self.numRows; i++) {
-//        for (int j = 0; j < self.numCols; j++) {
-//            for (int iCell = 0; iCell < cellHeight; iCell++) {
-//                for (int jCell = 0; jCell < cellWidth; jCell++) {
-//                    int iGlobal = i * cellHeight + iCell;
-//                    int jGlobal = j * cellWidth + jCell;
-//                    int k = iGlobal * width + jGlobal;
-//                    
-//                    self.gradient[k] = 250 * [self.saliencyMatrix entryAtRow:i andColumn:j] / max;
-//                }
-//            }
-//        }
-//    }
+    for (int i = 0; i < self.numRows; i++) {
+        for (int j = 0; j < self.numCols; j++) {
+            for (int iCell = 0; iCell < cellHeight; iCell++) {
+                for (int jCell = 0; jCell < cellWidth; jCell++) {
+                    int iGlobal = i * cellHeight + iCell;
+                    int jGlobal = j * cellWidth + jCell;
+                    int k = iGlobal * width + jGlobal;
+                    
+                    self.gradient[k] = 250 * [self.saliencyMatrix entryAtRow:i andColumn:j] / max;
+                }
+            }
+        }
+    }
 }
 
 - (void)resizeToHeight:(int)targetHeight width:(int)targetWidth
